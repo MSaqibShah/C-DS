@@ -159,66 +159,88 @@ printf("\n");
 return HEAD;
 }
 
-// NODE update_data_in_list_double(NODE HEAD, int POS, int data){
-//     printf("\n++++++++++++++++++++++++++++++++");
-//     printf("\nTrying to update data...\n");
-//     // int len = lengthOfList(HEAD);
-//     NODE currentNode = HEAD, previousNode = HEAD, newNode;
-//     int status = get_node_by_pos_double(HEAD, POS, &currentNode, &previousNode);
+NODE update_data_in_list_double(NODE HEAD, int POS, int data){
+    printf("\n++++++++++++++++++++++++++++++++");
+    printf("\nTrying to update data...\n");
+    // int len = lengthOfList(HEAD);
+    NODE currentNode = HEAD, previousNode = HEAD, newNode;
+    int status = get_node_by_pos_double(HEAD, POS, &currentNode);
 
-//     if (status==200 || status==201){
-//         // POS == 1
-//         currentNode->data = data;
-//         printf("\nNode Updated Succesfully!");
-//         display_list_double(HEAD);
-//     }else if(status==202){
-//         printf("\nERROR: %d is not a valid position as the list contains only %d elements", POS, POS-1);
-//         printf("\nERROR: Update Failed");
-//     }
-//     else{
-//         printf("\nERROR: Update Failed");
-//     }
-// printf("\n++++++++++++++++++++++++++++++++");
-// printf("\n");
-// return HEAD;
-// }
+    if(status==401 || status==402 || status==403 || status == 202){
+        // Empty list or POS is less than 1 or POS > len
+        printf("\nUpdate Failed");
+    }else if(status==201|| status == 200){
+        // Node is the first, last, middle Node in the list
+        currentNode -> data =data;
+        printf("\nNode Updated Succesfully!");
+        display_list_double(HEAD);
+    }
+printf("\n++++++++++++++++++++++++++++++++");
+printf("\n");
+return HEAD;
+}
 
 // // =================== DELETE ===================
-// NODE delete_node_from_list_double(NODE HEAD, int POS){
-//     printf("\n++++++++++++++++++++++++++++++++");
-//     printf("\nTrying to delete node...\n");
-//     // int len = lengthOfList(HEAD);
-//     NODE currentNode = HEAD, previousNode = HEAD, deletedNode;
-//     int status = get_node_by_pos_double(HEAD, POS, &currentNode, &previousNode);
+NODE delete_node_from_list_double(NODE HEAD, int POS){
+    printf("\n++++++++++++++++++++++++++++++++");
+    printf("\nTrying to delete node...\n");
+    // int len = lengthOfList(HEAD);
+    NODE currentNode = HEAD, previousNode = HEAD, deletedNode;
+    int status = get_node_by_pos_double(HEAD, POS, &currentNode);
 
-//     if (status==200){
-//         deletedNode =currentNode;
-//         previousNode-> flink = currentNode->flink;
-//         printf("Deleted %d", deletedNode->data);
-//         printf("\nNode Deleted Succesfully!");
-//         deletedNode->flink = NULL;
-//         free(deletedNode);
-//         display_list_double(HEAD);
-//     }else if(status == 201){
-//         deletedNode =currentNode;
-//         HEAD= HEAD->flink;
-//         printf("Deleted %d", deletedNode->data);
-//         printf("\nNode Deleted Succesfully!");
-//         deletedNode->flink = NULL;
-//         free(deletedNode);
-//         display_list_double(HEAD); 
-//     }
-//     else if(status==202){
-//         printf("\nERROR: %d is not a valid position as the list contains only %d elements", POS, POS-1);
-//         printf("\nERROR: Delete Failed");
-//     }
-//     else{
-//         printf("\nERROR: Delete Failed");
-//     }
-// printf("\n++++++++++++++++++++++++++++++++");
-// printf("\n");
-// return HEAD;
-// }
+    if(status==401 || status==402 || status==403 || status == 202){
+        // Empty list or POS is less than 1 or POS > len
+        printf("\nDeletion Failed");
+    }else if(status==201){
+        // Node is the first
+        deletedNode = currentNode;
+        currentNode = currentNode->flink;
+        currentNode -> blink =NULL;
+        HEAD = currentNode;
+        printf("\nDeleted %d", deletedNode->data);
+        printf("\nNode Deleted Succesfully!");
+        deletedNode->flink =NULL;
+        deletedNode -> blink = NULL;
+        free(deletedNode);
+    }else if(status == 200){
+        // Node is the middle or Last Node in the list
+        if(currentNode->flink == NULL){
+            // Node is the last node
+            deletedNode = currentNode;
+            previousNode = currentNode->blink;
+            previousNode -> flink = NULL;
+            
+            currentNode->blink = NULL;
+            
+            printf("\nDeleted %d", deletedNode->data);
+            printf("\nNode Deleted Succesfully!");
+            deletedNode->flink =NULL;
+            deletedNode -> blink = NULL;
+            free(currentNode);
+            free(deletedNode);
+        }else{
+            // Node is the middle node
+            deletedNode = currentNode;
+            previousNode = currentNode->blink;
+            
+            previousNode -> flink = currentNode->flink;
+            currentNode = currentNode->flink;
+            currentNode-> blink = previousNode;
+            
+            printf("\nDeleted %d", deletedNode->data);
+            printf("\nNode Deleted Succesfully!");
+            
+            deletedNode->flink =NULL;
+            deletedNode -> blink = NULL;
+            free(deletedNode);
+        }
+    }
+    display_list_double(HEAD);
+    
+printf("\n++++++++++++++++++++++++++++++++");
+printf("\n");
+return HEAD;
+}
 
 
 
@@ -276,7 +298,7 @@ int get_node_by_pos_double(NODE HEAD, int POS, NODE* currentNode){
         return status;
     }else{
         status = 200;
-        printf("\nNote : Returning node");
+        printf("\nNote (%d) : Returning node", status);
          *currentNode =HEAD;
          int i = 1;
          while(i<POS){
@@ -302,14 +324,15 @@ int main() {
     
     // doubleList = append_to_list_double(doubleList, 5);
     
-     doubleList = insert_into_list_double(doubleList, 6, 5);
+    //  doubleList = insert_into_list_double(doubleList, 6, 5);
     
-    // doubleList = update_data_in_list_double(doubleList, 3, 1000);
+    // doubleList = update_data_in_list_double(doubleList, -3, 1000);
     
-    // doubleList = delete_node_from_list_double(doubleList, 3);
+    // doubleList = delete_node_from_list_double(doubleList, 1);
     
     // int len = length_of_list_double(doubleList);
     // printf("Length of list is: %d \n", len);
+    
     
     // int status = get_node_by_pos_double(doubleList, 3, &temp);
     // printf("Status: %d\n", status);
