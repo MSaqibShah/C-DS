@@ -10,18 +10,20 @@ struct node {
 typedef struct node* NODE;
 
 // Function prototypes
-NODE createNode();
-NODE createSingleList();
-NODE appendToSingleList();
-NODE insertIntoSingleList();
-void displayList(NODE HEAD);
-int lengthOfList(NODE HEAD);
-// void updateDataInList(NODE HEAD, int POS);
-int getNodeByPos(NODE HEAD, int POS,NODE *currentNode, NODE *previousNode);
-NODE updateDataInList(NODE HEAD, int POS, int data);
+NODE create_node_single();
+NODE create_node_with_data_single(int data);
+NODE create_list_single();
+void display_list_single(NODE HEAD);
+NODE append_to_list_single(NODE HEAD, int DATA);
+NODE insert_into_list_single(NODE HEAD, int POS, int DATA);
+NODE update_data_in_list_single(NODE HEAD, int POS, int data);
+NODE delete_node_from_list_single(NODE HEAD, int POS);
+int length_of_list_single(NODE HEAD);
+int get_node_by_pos_single(NODE HEAD, int POS, NODE* currentNode, NODE* previousNode);
+
 // =================== CREATE =================== 
 // Create a node 
-NODE createNode(){
+NODE create_node_single(){
     NODE newNode;
     int data;
     newNode = (NODE)malloc(sizeof(NODE));
@@ -35,9 +37,17 @@ NODE createNode(){
     return newNode;
 }
 
+NODE create_node_with_data_single(int data){
+    NODE newNode;
+    newNode = (NODE)malloc(sizeof(NODE));
+    newNode -> data = data;
+    newNode->flink = NULL;
+    printf("\nNode Created Succesfully!");
+    return newNode;
+}
 
 // Create a List
-NODE createSingleList(){
+NODE create_list_single(){
     printf("\n++++++++++++++++++++++++++++++++");
     printf("\nCreating a singly linked list...");
     // printf("\n++++++++++++++++++++++++++++++++");
@@ -53,15 +63,15 @@ NODE createSingleList(){
     }
     
     
-    head = createNode();
+    head = create_node_single();
     next = head;
     for(int i = 0; i<N-1; i++){
-        newNode = createNode();
+        newNode = create_node_single();
         next -> flink = newNode;
         next = next-> flink;
     }
     printf("\nList Created Succesfully!");
-    displayList(head);
+    display_list_single(head);
     printf("\n++++++++++++++++++++++++++++++++");
     printf("\n");
     
@@ -69,7 +79,7 @@ NODE createSingleList(){
 }
 
 // =================== READ ===================
-void displayList(NODE HEAD){
+void display_list_single(NODE HEAD){
     NODE temp = HEAD;
     printf("\n");
     // printf("=======================================\n");
@@ -85,42 +95,42 @@ void displayList(NODE HEAD){
 // =================== UPDATE ===================
 
 // Append a Node to a list
-NODE appendToSingleList(NODE HEAD){
+NODE append_to_list_single(NODE HEAD, int DATA){
     printf("\nAppending...\n");
     
     NODE temp = HEAD, newNode;
-    newNode = createNode();
+    newNode = create_node_with_data_single(DATA);
     while(temp->flink!=NULL){
         temp= temp->flink;
     }
     temp->flink = newNode;
     
     printf("Node Appended Succesfully!\n");
-    displayList(HEAD);
+    display_list_single(HEAD);
     return HEAD;
     
 }
 
 // Insert a node anywhere on a list i.e front, last, or End
-NODE insertIntoSingleList(NODE HEAD, int POS)
+NODE insert_into_list_single(NODE HEAD, int POS, int DATA)
 {
     printf("\n++++++++++++++++++++++++++++++++");
     printf("\nTrying to insert...\n");
-    int len = lengthOfList(HEAD);
+    int len = length_of_list_single(HEAD);
     NODE currentNode = HEAD, previousNode = HEAD, newNode;
-    newNode = createNode();
-    int status = getNodeByPos(HEAD, POS, &currentNode, &previousNode);
+    newNode = create_node_with_data_single(DATA);
+    int status = get_node_by_pos_single(HEAD, POS, &currentNode, &previousNode);
 
     if (status==200||202){
         previousNode->flink = newNode;
         newNode->flink = currentNode;
         printf("\nNode Inserted Succesfully!");
-        displayList(HEAD);
+        display_list_single(HEAD);
     }else if(status==201){
         newNode->flink = currentNode;
         HEAD = newNode;
         printf("\nNode Inserted Succesfully!");
-        displayList(HEAD);
+        display_list_single(HEAD);
     }
     else{
         printf("Insertion Failed");
@@ -130,18 +140,18 @@ printf("\n");
 return HEAD;
 }
 
-NODE updateDataInList(NODE HEAD, int POS, int data){
+NODE update_data_in_list_single(NODE HEAD, int POS, int data){
     printf("\n++++++++++++++++++++++++++++++++");
     printf("\nTrying to update data...\n");
     // int len = lengthOfList(HEAD);
     NODE currentNode = HEAD, previousNode = HEAD, newNode;
-    int status = getNodeByPos(HEAD, POS, &currentNode, &previousNode);
+    int status = get_node_by_pos_single(HEAD, POS, &currentNode, &previousNode);
 
     if (status==200 || status==201){
         // POS == 1
         currentNode->data = data;
         printf("\nNode Updated Succesfully!");
-        displayList(HEAD);
+        display_list_single(HEAD);
     }else if(status==202){
         printf("\nERROR: %d is not a valid position as the list contains only %d elements", POS, POS-1);
         printf("\nERROR: Update Failed");
@@ -155,12 +165,12 @@ return HEAD;
 }
 
 // =================== DELETE ===================
-NODE deleteNodeFromList(NODE HEAD, int POS){
+NODE delete_node_from_list_single(NODE HEAD, int POS){
     printf("\n++++++++++++++++++++++++++++++++");
     printf("\nTrying to delete node...\n");
     // int len = lengthOfList(HEAD);
     NODE currentNode = HEAD, previousNode = HEAD, deletedNode;
-    int status = getNodeByPos(HEAD, POS, &currentNode, &previousNode);
+    int status = get_node_by_pos_single(HEAD, POS, &currentNode, &previousNode);
 
     if (status==200){
         deletedNode =currentNode;
@@ -169,7 +179,7 @@ NODE deleteNodeFromList(NODE HEAD, int POS){
         printf("\nNode Deleted Succesfully!");
         deletedNode->flink = NULL;
         free(deletedNode);
-        displayList(HEAD);
+        display_list_single(HEAD);
     }else if(status == 201){
         deletedNode =currentNode;
         HEAD= HEAD->flink;
@@ -177,7 +187,7 @@ NODE deleteNodeFromList(NODE HEAD, int POS){
         printf("\nNode Deleted Succesfully!");
         deletedNode->flink = NULL;
         free(deletedNode);
-        displayList(HEAD); 
+        display_list_single(HEAD); 
     }
     else if(status==202){
         printf("\nERROR: %d is not a valid position as the list contains only %d elements", POS, POS-1);
@@ -194,7 +204,7 @@ return HEAD;
 
 
 // Auxallay Functions
-int lengthOfList(NODE HEAD){
+int length_of_list_single(NODE HEAD){
     NODE temp=HEAD;
     int length = 0;
 
@@ -205,11 +215,11 @@ int lengthOfList(NODE HEAD){
     return length;
 }
 
-int getNodeByPos(NODE HEAD, int POS, NODE* currentNode, NODE* previousNode)
+int get_node_by_pos_single(NODE HEAD, int POS, NODE* currentNode, NODE* previousNode)
 {
     int  status, len;
     *currentNode = *previousNode = HEAD;
-    len = lengthOfList(HEAD);
+    len = length_of_list_single(HEAD);
     
     if (HEAD == NULL)
     {
@@ -265,14 +275,14 @@ int getNodeByPos(NODE HEAD, int POS, NODE* currentNode, NODE* previousNode)
 
 int main() {
     
-  NODE singleList = createSingleList();
-    int len = lengthOfList(singleList);
+  NODE singleList = create_list_single();
+    int len = length_of_list_single(singleList);
 //   singleList = appendToSingleList(singleList);
 
 
-    //  singleList = insertIntoSingleList(singleList, 3);
-    // singleList = updateDataInList(singleList, 3, 1000);
-    singleList = deleteNodeFromList(singleList, 3);
+     singleList = insert_into_list_single(singleList, 3, 5);
+    // singleList = update_data_in_list_single(singleList, 3, 1000);
+    // singleList = delete_node_from_list_single(singleList, 3);
     
      
 }
